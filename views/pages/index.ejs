@@ -2,6 +2,10 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=<%- process.env.GOOGLE_MAPS_KEY %>&callback=initMap&libraries=places">
+  </script>
 </head>
 
 <body>
@@ -15,54 +19,31 @@
     </a>
     <h1>Job Spotter Spotter</h1>
     <p>Let's try this out</p>
-    <!-- <a type="button" class="btn btn-lg btn-default" href="https://devcenter.heroku.com/articles/getting-started-with-nodejs"><span class="glyphicon glyphicon-flash"></span> Getting Started with Node</a>
-    <a type="button" class="btn btn-lg btn-primary" href="https://github.com/heroku/node-js-getting-started"><span class="glyphicon glyphicon-download"></span> Source on GitHub</a> -->
   </div>
+  <div id="load"></div>
   <div id="map"></div>
+
   <script>
-    var HttpClient = function() {
-        this.get = function(aUrl, aCallback) {
-            var anHttpRequest = new XMLHttpRequest();
-            anHttpRequest.onreadystatechange = function() {
-                if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
-                    aCallback(anHttpRequest.responseText);
-            }
-
-            anHttpRequest.open( "GET", aUrl, true );
-            anHttpRequest.send( null );
-        }
-    }
-
 
     async function initMap() {
-      var client = new HttpClient();
-      client.get(`https://sheets.googleapis.com/v4/spreadsheets/1C2zd50u_7bmBsSkBEHG87Eakjgu01x7-m6ktFKxnuF8/values/Sheet1!A1:D5?key=<%- process.env.GOOGLE_MAPS_KEY %>`, function(response) {
-        const res = JSON.parse(response)
-        var markers = []
+      var uluru = {lat: 49.3003431,	lng: -123.0823739};
 
-        res.values.forEach((value, idx) => {
-          if (idx !== 0) {
-            markers.push({
-              lat: parseFloat(value[0]),
-              lng: parseFloat(value[1])
-            })
-          }
-        })
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: uluru
+      });
 
+      var postings = JSON.parse(JSON.stringify(<%- JSON.stringify(data) %>))
 
-        var uluru = {lat: 49.3003431,	lng: -123.0823739};
-
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 12,
-          center: uluru
+      postings.forEach((post) => {
+        // console.log('Post: ', post)
+        new google.maps.Marker({
+          position: {
+            lat: post.latitude,
+            lng: post.longitude
+          },
+          map: map
         });
-
-        for(var ix = 0; ix < markers.length; ix++) {
-          new google.maps.Marker({
-            position: markers[ix],
-            map: map
-          });
-        }
       })
     }
   </script>

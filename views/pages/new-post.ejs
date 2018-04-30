@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=<%- process.env.GOOGLE_MAPS_KEY %>&libraries=places">
+  </script>
+  <script>
+    function updateHiddenFields() {
+      var e = document.getElementById('establishmentSelect')
+      var selectedItem = e.options[e.selectedIndex]
+      document.getElementById('address').setAttribute('value', selectedItem.getAttribute('data-placeAddress'))
+      document.getElementById('name').setAttribute('value', selectedItem.getAttribute('data-placename'))
+      document.getElementById('placeId').setAttribute('value', selectedItem.getAttribute('data-placeId'))
+
+      console.log('Item: ', selectedItem)
+    }
+  </script>
+</head>
+
+  <body>
+
+    <% include ../partials/nav.ejs %>
+
+    <div class="jumbotron text-center">
+
+      <div>
+
+      </div>
+
+      <form action="/posting" name="tt" method="POST">
+        <input type="text" name="latitude" id="latitude" hidden><br/>
+        <input type="text" name="longitude" id="longitude" hidden><br/>
+        <input type="text" name="address" id="address" hidden><br/>
+        <input type="text" name="name" id="name" hidden><br/>
+        <input type="text" name="placeId" id="placeId" hidden><br/>
+
+        <select id="establishmentSelect" name="establishment" onchange="updateHiddenFields()"></select>
+
+        <button type="submit">Submit</button>
+      </form>
+
+      <div id="demo"></div>
+      <div id="map"></div>
+    </div>
+
+
+
+    <script>
+      var x = document.getElementById("demo");
+      function getCurrentLocation() {
+        if (navigator.geolocation) {
+
+          navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+          x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+      }
+
+      async function showPosition(position) {
+        document.getElementById('latitude').setAttribute('value', position.coords.latitude)
+        document.getElementById('longitude').setAttribute('value', position.coords.longitude)
+
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 18,
+          center: {lat: position.coords.latitude,	lng: position.coords.longitude}
+        });
+
+        const establishments = await findLocalEstablishments(map, position.coords.latitude, position.coords.longitude)
+        // console.log('E: ', establishments)
+
+        var select = document.getElementById("establishmentSelect");
+        for(var i = 0; i < establishments.length; i++) {
+          var option = document.createElement('option');
+
+          option.text = establishments[i].name
+          option.value = establishments[i].vicinity
+
+          option.setAttribute('data-placeId', establishments[i].id)
+          option.setAttribute('data-placeName', establishments[i].name)
+          option.setAttribute('data-placeAddress', establishments[i].vicinity)
+
+          select.add(option, i);
+        }
+        updateHiddenFields()
+      }
+
+      getCurrentLocation()
+
+    </script>
+
+    <script>
+      let app = firebase.app();
+      firebase.database().ref('/posting').on('value', snapshot => {
+        console.log('Snapshot 2: ', snapshot.val())
+      });
+
+      function storeInFirebase(data) {
+        if (!data.latitude && !data.longitude && !data.name) {
+          return
+        }
+        // firebase.database().ref(`posting/${data.name}`).set(data)
+      }
+
+    </script>
+  </body>
+</html>
