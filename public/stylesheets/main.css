@@ -33,3 +33,15 @@
 form {
   color: black
 }
+form button {
+  background: white;
+}
+
+form {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+body {
+  background: #532F8C
+}
