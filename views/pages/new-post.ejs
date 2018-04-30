@@ -50,8 +50,14 @@
       var x = document.getElementById("demo");
       function getCurrentLocation() {
         if (navigator.geolocation) {
-
-          navigator.geolocation.getCurrentPosition(showPosition);
+          navigator.geolocation.getCurrentPosition(showPosition,
+            function(error){
+                alert(error.message);
+            }, {
+                enableHighAccuracy: true
+                      ,timeout : 5000
+            }
+          );
         } else {
           x.innerHTML = "Geolocation is not supported by this browser.";
         }
