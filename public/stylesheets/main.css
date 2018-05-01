@@ -45,3 +45,7 @@ form {
 body {
   background: #532F8C
 }
+
+span.address {
+  font-size: 10px;
+}

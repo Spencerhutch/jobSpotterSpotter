@@ -17,6 +17,7 @@ express()
   .set('view engine', 'ejs')
   .get('/', post.getPosts)
   .get('/new', (req, res) => res.render('pages/new-post'))
+  .get('/list', (req, res) => res.render('pages/list'))
   .post('/posting', post.createPost)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 

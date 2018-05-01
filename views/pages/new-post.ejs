@@ -16,6 +16,13 @@
       console.log('Item: ', selectedItem)
     }
   </script>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
 </head>
 
   <body>
@@ -35,7 +42,12 @@
         <input type="text" name="name" id="name" hidden><br/>
         <input type="text" name="placeId" id="placeId" hidden><br/>
 
-        <select id="establishmentSelect" name="establishment" onchange="updateHiddenFields()"></select>
+        <select
+          class="selectpicker" data-size="5"
+          id="establishmentSelect"
+          name="establishment"
+          onchange="updateHiddenFields()"
+        ></select>
 
         <button type="submit">Submit</button>
       </form>
@@ -84,10 +96,13 @@
           option.value = establishments[i].vicinity
 
           option.setAttribute('data-placeId', establishments[i].id)
+          option.setAttribute('data-content', `${establishments[i].name}<br/><span class="address">${establishments[i].vicinity}</span>`)
           option.setAttribute('data-placeName', establishments[i].name)
           option.setAttribute('data-placeAddress', establishments[i].vicinity)
-
-          select.add(option, i);
+          // option.setAttribute('data-subtext', establishments[i].vicinity)
+          select.appendChild(option)
+          // select.add(option, i);
+          $('.selectpicker').selectpicker('refresh');
         }
         updateHiddenFields()
       }
