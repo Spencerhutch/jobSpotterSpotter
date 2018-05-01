@@ -9,7 +9,7 @@ function findLocalEstablishments(map, lat, lng, onItemClicked) {
   return new Promise((resolve, reject) => {
     service = new google.maps.places.PlacesService(map);
     service.nearbySearch(request, (results, status) => {
-      console.log('results: ', results)
+      // console.log('results: ', results)
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         /*
         for (var i = 0; i < results.length; i++) {

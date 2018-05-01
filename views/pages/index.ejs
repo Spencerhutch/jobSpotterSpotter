@@ -36,16 +36,28 @@
       var postings = JSON.parse(JSON.stringify(<%- JSON.stringify(data) %>))
 
       postings.forEach((post) => {
-        // console.log('Post: ', post)
-        new google.maps.Marker({
+        console.log('Post: ', post)
+        var marker = new google.maps.Marker({
           position: {
             lat: post.latitude,
             lng: post.longitude
           },
           map: map
         });
+
+        attachMessage(marker, post.name)
       })
     }
+
+    function attachMessage(marker, secretMessage) {
+        var infowindow = new google.maps.InfoWindow({
+          content: secretMessage
+        });
+
+        marker.addListener('click', function() {
+          infowindow.open(marker.get('map'), marker);
+        });
+      }
   </script>
 </div>
 

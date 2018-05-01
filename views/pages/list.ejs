@@ -3,17 +3,46 @@
   <head>
     <% include ../partials/header.ejs %>
 
-    <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=<%- process.env.GOOGLE_MAPS_KEY %>&callback=initMap&libraries=places">
+    <script>
+      const url = 'http://localhost:4999/getList';
+      fetch(url)
+      .then((resp) => resp.json())
+      .then(function(data) {
+        console.log('Data: ', data)
+        var table = document.getElementById("postsTable");
+
+        data.forEach(element => {
+          var row = table.insertRow(1);
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          cell1.innerHTML = element.name;
+          cell2.innerHTML = element.address;
+          row.insertCell(2).innerHTML = element.created;
+        });
+
+      })
     </script>
   </head>
 
   <body>
-
     <% include ../partials/nav.ejs %>
 
     <div class="jumbotron text-center">
       <div class="container"></div>
+
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Postings Found</div>
+
+        <!-- Table -->
+        <table class="table" id="postsTable">
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Created</th>
+          </tr>
+        </table>
+      </div>
     </div>
   </body>
 </html>
