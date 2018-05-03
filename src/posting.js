@@ -18,7 +18,8 @@ module.exports.createPost = async (req, res) => {
     address: body.address,
     name: body.name,
     // placeId
-    created: new Date()
+    created: new Date(),
+    created_by: body.userId
   })
 
   res.redirect('/')

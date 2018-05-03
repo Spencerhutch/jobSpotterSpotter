@@ -36,7 +36,7 @@
       var postings = JSON.parse(JSON.stringify(<%- JSON.stringify(data) %>))
 
       postings.forEach((post) => {
-        console.log('Post: ', post)
+        // console.log('Post: ', post)
         var marker = new google.maps.Marker({
           position: {
             lat: post.latitude,

@@ -12,8 +12,7 @@
       document.getElementById('address').setAttribute('value', selectedItem.getAttribute('data-placeAddress'))
       document.getElementById('name').setAttribute('value', selectedItem.getAttribute('data-placename'))
       document.getElementById('placeId').setAttribute('value', selectedItem.getAttribute('data-placeId'))
-
-      console.log('Item: ', selectedItem)
+      document.getElementById('userId').setAttribute('value', userId)
     }
   </script>
 
@@ -41,6 +40,7 @@
         <input type="text" name="address" id="address" hidden><br/>
         <input type="text" name="name" id="name" hidden><br/>
         <input type="text" name="placeId" id="placeId" hidden><br/>
+        <input type="text" name="userId" id="userId" hidden><br/>
 
         <select
           class="selectpicker" data-size="5"
@@ -86,7 +86,6 @@
         });
 
         const establishments = await findLocalEstablishments(map, position.coords.latitude, position.coords.longitude)
-        // console.log('E: ', establishments)
 
         var select = document.getElementById("establishmentSelect");
         for(var i = 0; i < establishments.length; i++) {
@@ -99,9 +98,7 @@
           option.setAttribute('data-content', `${establishments[i].name}<br/><span class="address">${establishments[i].vicinity}</span>`)
           option.setAttribute('data-placeName', establishments[i].name)
           option.setAttribute('data-placeAddress', establishments[i].vicinity)
-          // option.setAttribute('data-subtext', establishments[i].vicinity)
           select.appendChild(option)
-          // select.add(option, i);
           $('.selectpicker').selectpicker('refresh');
         }
         updateHiddenFields()

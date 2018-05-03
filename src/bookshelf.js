@@ -19,6 +19,11 @@ var Post = bookshelf.Model.extend({
   idAttribute: 'postingId'
 });
 
+var User = bookshelf.Model.extend({
+  tableName: 'user',
+  idAttribute: 'uid'
+})
+
 
 module.exports.getPosts = () => {
   return Post.fetchAll()
@@ -28,3 +33,5 @@ module.exports.createPost = (data) => {
   const newItem = new Post(data)
   return newItem.save(null, {method: 'insert'})
 }
+
+module.exports.User = User

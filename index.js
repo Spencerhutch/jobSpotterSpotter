@@ -6,6 +6,7 @@ require('dotenv').load()
 
 const PORT = process.env.PORT || 5000
 var post = require('./src/posting')
+var user = require('./src/user')
 
 express()
   .use(bodyParser.json())
@@ -16,9 +17,16 @@ express()
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', post.getPosts)
+
+  // Post
+  .get('/getList', post.getList)
   .get('/new', (req, res) => res.render('pages/new-post', {active: 'new'}))
   .get('/list', (req, res) => res.render('pages/list', {active: 'list'}))
-  .get('/getList', post.getList)
+
+  // User
+  .get('/getUserId', user.getByEmail)
+
+
   .post('/posting', post.createPost)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
