@@ -20,6 +20,7 @@ express()
 
   // Post
   .post('/posting', post.createPost)
+  .delete('/post', post.removePost)
   .get('/getList', post.getList)
   .get('/new', (req, res) => res.render('pages/new-post', {active: 'new'}))
   .get('/list', (req, res) => res.render('pages/list', {active: 'list'}))

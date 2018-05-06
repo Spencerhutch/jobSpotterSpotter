@@ -36,7 +36,6 @@
       var postings = JSON.parse(JSON.stringify(<%- JSON.stringify(data) %>))
 
       postings.forEach((post) => {
-        // console.log('Post: ', post)
         var marker = new google.maps.Marker({
           position: {
             lat: post.latitude,
@@ -45,19 +44,36 @@
           map: map
         });
 
-        attachMessage(marker, post.name)
+        attachMessage(marker,post.postingId, post.name)
       })
     }
 
-    function attachMessage(marker, secretMessage) {
-        var infowindow = new google.maps.InfoWindow({
-          content: secretMessage
-        });
+    function attachMessage(marker, postingId, name) {
+      var infowindow = new google.maps.InfoWindow({
+        content: `
+          ${name}<br>
+          <button onclick="removePost('${postingId}', '${name}')">Expired</button>
+        `
+      });
 
-        marker.addListener('click', function() {
-          infowindow.open(marker.get('map'), marker);
+      marker.addListener('click', function() {
+        infowindow.open(marker.get('map'), marker);
+      });
+    }
+
+    function removePost(postingId, name) {
+      var res = confirm(`Are you sure the posting at ${name} has expired?`)
+      if (res) {
+        $.ajax({
+          type: "DELETE",
+          url: "/post",
+          data: `id=${postingId}`,
+          success: function(msg){
+            window.location.reload(false)
+          }
         });
       }
+    }
   </script>
 </div>
 

@@ -101,16 +101,27 @@
         for(var i = 0; i < establishments.length; i++) {
           var option = document.createElement('option');
 
+          // console.log('Establishment: ', establishments[i])
+          const elat = establishments[i].geometry.location.lat()
+          const elng = establishments[i].geometry.location.lng()
+
+          const distanceAway = getDistanceFromLatLonInKm(
+              elat, elng,
+              position.coords.latitude, position.coords.longitude
+            ).toFixed(2)
+
           option.text = establishments[i].name
           option.value = establishments[i].vicinity
 
           option.setAttribute('data-placeId', establishments[i].id)
-          option.setAttribute('data-content', `${establishments[i].name}<br/><span class="address">${establishments[i].vicinity}</span>`)
+          option.setAttribute('data-content', `${establishments[i].name}   <span class="distance">${distanceAway}</span><br/><span class="address">${establishments[i].vicinity}</span>`)
           option.setAttribute('data-placeName', establishments[i].name)
           option.setAttribute('data-placeAddress', establishments[i].vicinity)
+          option.setAttribute('data-distanceAway', distanceAway)
           select.appendChild(option)
           $('.selectpicker').selectpicker('refresh');
         }
+
         updateHiddenFields()
       }
 
@@ -163,7 +174,7 @@
                 <div class="grid-item">
                   <button id="cust" onclick="submitPlace(
                     '${place.formatted_address}',
-                    '${place.name}',
+                    '${escape(place.name)}',
                     '${place.geometry.location.lat()}',
                     '${place.geometry.location.lng()}'
                   )">
@@ -180,7 +191,7 @@
 
       function submitPlace(address, name, latitude, longitude) {
         document.getElementById('address').setAttribute('value', address)
-        document.getElementById('name').setAttribute('value', name)
+        document.getElementById('name').setAttribute('value', escape(name))
         document.getElementById('latitude').setAttribute('value', latitude)
         document.getElementById('longitude').setAttribute('value', longitude)
 

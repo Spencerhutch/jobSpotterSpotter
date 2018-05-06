@@ -3,7 +3,7 @@ var Bookshelf = require('./bookshelf')
 module.exports.getPosts = async (req, res) => {
   const posts = await Bookshelf.getPosts()
 
-  console.log('Posts: ', JSON.stringify(posts, null, 2))
+  // console.log('Posts: ', JSON.stringify(posts, null, 2))
 
   res.render('pages/index', {data: posts, active: 'home'})
 }
@@ -32,9 +32,10 @@ module.exports.getList = async (req, res) => {
 
 module.exports.removePost = async (req, res) => {
   const id = req.body && req.body.id
-
+  // console.log('Remove Id: ', id)
   if (id) {
-    return new Bookshelf.Post({postingId: id}).destroy()
+    await new Bookshelf.Post({postingId: id}).destroy()
+    res.send()
   } else {
     res.send()
   }

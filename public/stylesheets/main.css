@@ -98,3 +98,14 @@ th {
 .nav-tabs li a{
   margin: 0px 4px
 }
+
+#map button{
+  margin-top: 10px;
+  background: rgb(255, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+/* New Item Dropdown */
+span.distance{
+  float: right;
+}
