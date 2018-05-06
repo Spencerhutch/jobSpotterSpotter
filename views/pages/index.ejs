@@ -4,7 +4,7 @@
   <% include ../partials/header.ejs %>
 
   <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=<%- process.env.GOOGLE_MAPS_KEY %>&callback=initMap&libraries=places">
+    src="https://maps.googleapis.com/maps/api/js?key=<%- process.env.GOOGLE_MAPS_KEY %>&callback=startMap&libraries=places">
   </script>
 </head>
 
@@ -25,7 +25,7 @@
 
   <script>
 
-    async function initMap() {
+    function startMap() {
       var uluru = {lat: 49.3003431,	lng: -123.0823739};
 
       var map = new google.maps.Map(document.getElementById('map'), {
