@@ -5,6 +5,7 @@
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=<%- process.env.GOOGLE_MAPS_KEY %>&libraries=places">
   </script>
+
   <script>
     function updateHiddenFields() {
       var e = document.getElementById('establishmentSelect')
@@ -30,30 +31,37 @@
 
     <div class="jumbotron text-center">
 
-      <div>
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#near">Near By</a></li>
+        <li><a data-toggle="tab" href="#viaMap">Via Map</a></li>
+      </ul>
 
+      <div class="tab-content">
+        <div id="near" class="tab-pane fade in active">
+          <h3>Find Establishment in Dropdown</h3>
+          <form id="submitForm" action="/posting" name="tt" method="POST">
+            <input type="text" name="latitude" id="latitude" hidden><br/>
+            <input type="text" name="longitude" id="longitude" hidden><br/>
+            <input type="text" name="address" id="address" hidden><br/>
+            <input type="text" name="name" id="name" hidden><br/>
+            <input type="text" name="placeId" id="placeId" hidden><br/>
+            <input type="text" name="userId" id="userId" hidden><br/>
+
+            <select
+              class="selectpicker" data-size="5"
+              id="establishmentSelect"
+              name="establishment"
+              onchange="updateHiddenFields()"
+            ></select>
+
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+        <div id="viaMap" class="tab-pane fade">
+          <h3>Select Establishment</h3>
+          <div id="map"></div>
+        </div>
       </div>
-
-      <form action="/posting" name="tt" method="POST">
-        <input type="text" name="latitude" id="latitude" hidden><br/>
-        <input type="text" name="longitude" id="longitude" hidden><br/>
-        <input type="text" name="address" id="address" hidden><br/>
-        <input type="text" name="name" id="name" hidden><br/>
-        <input type="text" name="placeId" id="placeId" hidden><br/>
-        <input type="text" name="userId" id="userId" hidden><br/>
-
-        <select
-          class="selectpicker" data-size="5"
-          id="establishmentSelect"
-          name="establishment"
-          onchange="updateHiddenFields()"
-        ></select>
-
-        <button type="submit">Submit</button>
-      </form>
-
-      <div id="demo"></div>
-      <div id="map"></div>
     </div>
 
 
@@ -79,11 +87,13 @@
         document.getElementById('latitude').setAttribute('value', position.coords.latitude)
         document.getElementById('longitude').setAttribute('value', position.coords.longitude)
 
-
+        const originPoint = {lat: position.coords.latitude,	lng: position.coords.longitude}
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 18,
-          center: {lat: position.coords.latitude,	lng: position.coords.longitude}
+          center: originPoint
         });
+
+        var clickHandler = new ClickEventHandler(map, origin);
 
         const establishments = await findLocalEstablishments(map, position.coords.latitude, position.coords.longitude)
 
@@ -106,19 +116,75 @@
 
       getCurrentLocation()
 
-    </script>
+      var ClickEventHandler = function(map, origin) {
+        this.origin = origin;
+        this.map = map;
 
-    <script>
-      let app = firebase.app();
-      firebase.database().ref('/posting').on('value', snapshot => {
-        console.log('Snapshot 2: ', snapshot.val())
-      });
+        this.infowindow = new google.maps.InfoWindow;
+        this.placesService = new google.maps.places.PlacesService(map);
 
-      function storeInFirebase(data) {
-        if (!data.latitude && !data.longitude && !data.name) {
-          return
+        // Listen for clicks on the map.
+        this.map.addListener('click', this.handleClick.bind(this));
+      };
+
+      ClickEventHandler.prototype.handleClick = function(event) {
+        console.log('You clicked on: ' + event.latLng);
+        // If the event has a placeId, use it.
+        if (event.placeId) {
+          console.log('You clicked on place:' + event.placeId);
+
+          // Calling e.stop() on the event prevents the default info window from
+          // showing.
+          // If you call stop here when there is no placeId you will prevent some
+          // other map click event handlers from receiving the event.
+          event.stop();
+          // this.calculateAndDisplayRoute(event.placeId);
+          this.getPlaceInformation(event.placeId);
         }
-        // firebase.database().ref(`posting/${data.name}`).set(data)
+      };
+
+      ClickEventHandler.prototype.getPlaceInformation = function(placeId) {
+        var me = this;
+        this.placesService.getDetails({placeId: placeId}, function(place, status) {
+          if (status === 'OK') {
+            console.log('Place: ', place)
+            var location = {
+              latitude: place.geometry.location.lat(),
+              longitude:place.geometry.location.lng()
+            }
+            me.infowindow.close();
+            me.infowindow.setPosition(place.geometry.location);
+            me.infowindow.setContent(`
+              <div class="grid-container">
+                <div class="grid-item">
+                  <strong>${place.name}</strong><br>
+                  ${place.formatted_address}
+                </div>
+                <div class="grid-item">
+                  <button id="cust" onclick="submitPlace(
+                    '${place.formatted_address}',
+                    '${place.name}',
+                    '${place.geometry.location.lat()}',
+                    '${place.geometry.location.lng()}'
+                  )">
+                    Add Place
+                  </button><br>
+                  <input type="checkbox" checked> Submitted</input>
+                </div>
+              </div>
+            `);
+            me.infowindow.open(me.map);
+          }
+        });
+      };
+
+      function submitPlace(address, name, latitude, longitude) {
+        document.getElementById('address').setAttribute('value', address)
+        document.getElementById('name').setAttribute('value', name)
+        document.getElementById('latitude').setAttribute('value', latitude)
+        document.getElementById('longitude').setAttribute('value', longitude)
+
+        document.getElementById('submitForm').submit()
       }
 
     </script>

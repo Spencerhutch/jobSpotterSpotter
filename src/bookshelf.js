@@ -35,3 +35,4 @@ module.exports.createPost = (data) => {
 }
 
 module.exports.User = User
+module.exports.Post = Post

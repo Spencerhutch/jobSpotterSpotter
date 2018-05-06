@@ -19,15 +19,17 @@ express()
   .get('/', post.getPosts)
 
   // Post
+  .post('/posting', post.createPost)
   .get('/getList', post.getList)
   .get('/new', (req, res) => res.render('pages/new-post', {active: 'new'}))
   .get('/list', (req, res) => res.render('pages/list', {active: 'list'}))
 
   // User
   .get('/getUserId', user.getByEmail)
+  .post('/user', user.createUser)
 
+  .get('/login', (req, res) => res.render('pages/login', {active: 'login'}))
 
-  .post('/posting', post.createPost)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 

@@ -60,3 +60,41 @@ table {
 th {
   text-align: center;
 }
+
+
+.grid-container {
+  display: inline-flex;
+  min-height: 80px
+}
+
+.grid-item {
+  padding-right: 15px;
+  align-self: center;
+}
+
+.grid-item:nth-child(2) {
+  border-left: 1px solid black;
+  padding-left: 15px;
+}
+
+.grid-item strong{
+  font-size: 20px
+}
+
+.grid-item button {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+.nav-tabs li{
+  width: 50%;
+}
+
+.nav-tabs li a{
+  background: rgb(0, 0, 0, 0.6)
+}
+
+.nav-tabs li a{
+  margin: 0px 4px
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../partials/header.ejs %>
+
+    <script>
+    function showLogin() {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then(async function(result) {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        var token = result.credential.accessToken;
+        // The signed-in user info.
+        var user = result.user;
+        // ...
+        $('#nav-user').text = user.displayName
+
+        userId = await getUserIdFromEmail(user.email)
+        if (!userId) {
+          // save user!
+          document.getElementById('email').setAttribute('value', user.email)
+          document.getElementById('fullname').setAttribute('value', user.displayName)
+          document.getElementById('newUserSubmit').click()
+        } else {
+          window.location.href = '/'
+        }
+      }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+      })
+    }
+    </script>
+  </head>
+
+  <body>
+    <div class="jumbotron text-center">
+      <div class="container">
+        Job Spotter Spotter
+      </div>
+
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <form action="/user" method="POST" style="display: none">
+          <input id="email" name="email">
+          <input id="fullname" name="fullname">
+          <button id="newUserSubmit" type="submit">Submit</button>
+        </form>
+        <button onclick="showLogin()">Login</button>
+      </div>
+    </div>
+  </body>
+</html>

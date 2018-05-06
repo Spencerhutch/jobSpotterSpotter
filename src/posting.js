@@ -29,3 +29,13 @@ module.exports.getList = async (req, res) => {
   const posts = await Bookshelf.getPosts()
   res.send(posts)
 }
+
+module.exports.removePost = async (req, res) => {
+  const id = req.body && req.body.id
+
+  if (id) {
+    return new Bookshelf.Post({postingId: id}).destroy()
+  } else {
+    res.send()
+  }
+}

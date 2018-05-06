@@ -29,36 +29,16 @@
     firebase.auth().onAuthStateChanged(async function(user) {
       if (user) {
         // User is signed in.
-        console.log('U2: ', user)
         $('#nav-user').text(user.displayName)
         userId = await getUserIdFromEmail(user.email)
-        console.log('UserId: ', userId)
-
       } else {
         var provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() =>
-          firebase.auth().signInWithPopup(provider).then(async function(result) {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            var token = result.credential.accessToken;
-            // The signed-in user info.
-            var user = result.user;
-            // ...
-            console.log('User: ', user)
-            $('#nav-user').text = user.displayName
-
-            userId = await getUserIdFromEmail(user.email)
-          }).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // The email of the user's account used.
-            var email = error.email;
-            // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
-            // ...
-          })
-        );
+        .then(() => {
+          if (window.location.pathname != '/login') {
+            window.location.href = '/login'
+          }
+        });
       }
     });
 
@@ -68,12 +48,14 @@
     }
 
     async function getUserIdFromEmail(email) {
-      const url = '/getUserId';
+      const url = `/getUserId?email=${email}`;
       return fetch(url)
         .then((resp) => resp.json())
-        .then(function(data) {
-          console.log('Data: ', data)
-          return data.uid;
-        })
+        .then((data) => data.uid)
+    }
+
+    async function saveUser() {
+      const url = '/user'
+      // return post
     }
   </script>
