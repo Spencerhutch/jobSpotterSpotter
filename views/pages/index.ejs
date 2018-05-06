@@ -52,7 +52,7 @@
       var infowindow = new google.maps.InfoWindow({
         content: `
           ${name}<br>
-          <button onclick="removePost('${postingId}', '${name}')">Expired</button>
+          <button onclick="removePost('${postingId}', '${unescape(name)}')">Expired</button>
         `
       });
 

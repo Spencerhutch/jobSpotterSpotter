@@ -191,7 +191,7 @@
 
       function submitPlace(address, name, latitude, longitude) {
         document.getElementById('address').setAttribute('value', address)
-        document.getElementById('name').setAttribute('value', escape(name))
+        document.getElementById('name').setAttribute('value', unescape(name))
         document.getElementById('latitude').setAttribute('value', latitude)
         document.getElementById('longitude').setAttribute('value', longitude)
 
